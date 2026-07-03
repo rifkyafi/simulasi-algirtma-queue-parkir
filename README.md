@@ -104,41 +104,14 @@ Menyimpan data kendaraan:
  0. Keluar
 ```
 
-## Refactoring — SOLID Principles
+## Struktur Kode
 
-Program ini telah di-refactor dari satu file `main.py` (441 baris) menjadi modul-modul terpisah yang mengikuti prinsip **SOLID**.
+Semua kode program telah digabung ke dalam satu file `main.py` untuk kemudahan eksekusi. Struktur kelas di dalamnya mencakup:
 
-### Struktur Folder
-
-```
-algo/
-├── main.py                         # Entry point (5 baris)
-├── structures/                     # Data Structures
-│   ├── __init__.py
-│   ├── node.py                     # Node (linked list)
-│   ├── bst_node.py                 # BSTNode (tree node)
-│   ├── queue.py                    # Queue (FIFO)
-│   ├── stack.py                    # Stack (LIFO)
-│   ├── bst.py                      # BinarySearchTree
-│   └── heap.py                     # MaxHeap
-├── models/                         # Entity
-│   ├── __init__.py
-│   └── kendaraan.py                # Kendaraan + prioritas
-└── services/                       # Business Logic
-    ├── __init__.py
-    ├── parkir_system.py            # Orchestrator
-    └── menu.py                     # CLI Menu
-```
-
-### SOLID Mapping
-
-| Prinsip | Penerapan |
-|---------|-----------|
-| **S**ingle Responsibility | Setiap file punya 1 tanggung jawab: `Queue` hanya urus queue, `Kendaraan` hanya data kendaraan, `Menu` hanya IO |
-| **O**pen/Closed | Class seperti `Queue`, `Stack`, `BST`, `Heap` bisa di-extend tanpa memodifikasi class lain |
-| **L**iskov | Semua struktur data bisa diganti implementasinya tanpa merusak `ParkirSystem` |
-| **I**nterface Segregation | Method di tiap class spesifik sesuai kebutuhan masing-masing struktur data |
-| **D**ependency Inversion | `ParkirSystem` tergantung pada abstraksi (`Queue`, `Stack`, `BST`, `Heap`), bukan implementasi detail |
+- **Struktur Data**: `Node`, `BSTNode`, `Queue`, `Stack`, `MaxHeap`, `BinarySearchTree`
+- **Model / Entitas**: `Kendaraan`
+- **Logika Sistem**: `ParkirSystem`
+- **Antarmuka CLI**: `Menu`
 
 ## Cara Menjalankan
 
