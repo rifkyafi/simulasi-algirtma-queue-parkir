@@ -231,6 +231,24 @@ class BinarySearchTree:
     def is_empty(self):
         return self.root is None
 
+    def height(self):
+        return self._height_rec(self.root)
+
+    def _height_rec(self, node):
+        if node is None:
+            return 0
+        left_height = self._height_rec(node.left)
+        right_height = self._height_rec(node.right)
+        return 1 + max(left_height, right_height)
+
+    def node_count(self):
+        return self._node_count_rec(self.root)
+
+    def _node_count_rec(self, node):
+        if node is None:
+            return 0
+        return 1 + self._node_count_rec(node.left) + self._node_count_rec(node.right)
+
 
 class Kendaraan:
     def __init__(self, no_tiket, plat, jenis, vip, jam_masuk):
@@ -359,7 +377,7 @@ class ParkirSystem:
         print("  STATUS SISTEM PARKIR")
         print("="*60)
         q_size = self.antrian_masuk.size()
-        bst_size = len(self.parkir_aktif.inorder())
+        bst_size = self.parkir_aktif.node_count()
         h_size = self.prioritas_keluar.size()
         s_size = self.riwayat.size()
         print(f"  Queue (antrian masuk)     : {q_size} kendaraan")

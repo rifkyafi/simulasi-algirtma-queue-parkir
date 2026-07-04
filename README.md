@@ -40,14 +40,16 @@ Menggunakan linked list dengan pointer `top`.
 ### 4. Binary Search Tree (BST)
 Menyimpan data dengan key unik (nomor tiket). Setiap node BST (BSTNode) memiliki `key`, `data`, `left`, `right`.
 
-| Method         | Deskripsi |
-|----------------|-----------|
-| `insert`       | Tambah node (rekursif) |
-| `search`       | Cari node berdasarkan key |
-| `delete`       | Hapus node (3 kasus: leaf, satu anak, dua anak) |
-| `_min_value_node` | Cari node dengan key terkecil (inorder successor) |
-| `inorder`      | Traversal kiri-akar-kanan, hasil list `(key, data)` |
-| `is_empty`     | Cek apakah pohon kosong |
+| Method              | Deskripsi |
+|---------------------|-----------|
+| `insert`            | Tambah node (rekursif) |
+| `search`            | Cari node berdasarkan key |
+| `delete`            | Hapus node (3 kasus: leaf, satu anak, dua anak) |
+| `_min_value_node`   | Cari node dengan key terkecil (inorder successor) |
+| `inorder`           | Traversal kiri-akar-kanan, hasil list `(key, data)` |
+| `is_empty`          | Cek apakah pohon kosong |
+| `height`            | Hitung tinggi pohon secara rekursif |
+| `node_count`        | Hitung jumlah node secara rekursif |
 
 **Digunakan untuk**: menyimpan kendaraan yang sedang parkir, key = nomor tiket.
 
@@ -86,7 +88,7 @@ Menyimpan data kendaraan:
 | `lihat_parkir_aktif` | Tampilkan **BST** (inorder) |
 | `lihat_prioritas`   | Tampilkan **Heap** (urut descending) |
 | `lihat_riwayat`     | Tampilkan **Stack** |
-| `lihat_semua`       | Tampilkan ukuran semua struktur |
+| `lihat_semua`       | Tampilkan ukuran semua struktur (BST menggunakan `node_count()`) |
 
 ### Menu Program
 
