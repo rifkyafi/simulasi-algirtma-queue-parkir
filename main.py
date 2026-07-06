@@ -22,7 +22,7 @@ SKOR_JENIS_MOTOR = 25       # Poin tambahan untuk jenis Motor
 SKOR_PER_JAM_MASUK = 10     # Poin per jam masuk (semakin pagi = semakin lama parkir = prioritas lebih tinggi)
 
 SEPARATOR  = "=" * 78       # Garis pembatas utama
-GARIS_TIPIS = "-" * 78      # Garis tipis untuk tampilan menu
+
 
 # Lebar setiap kolom pada tabel kendaraan
 LEBAR_NO     = 4
@@ -970,8 +970,7 @@ class Menu:
         # 1. Masukkan semua ke antrian (Queue)
         print("  [SYSTEM] Menambahkan 8 data dummy kendaraan...")
         for plat, jenis, status, jam in data_awal:
-            # Gunakan _tambah_ke_antrian langsung agar tidak nge-print berlebihan jika perlu
-            # Tapi daftarkan_kendaraan ada print, tidak masalah untuk awal
+            # cukup panggil daftarkan_kendaraan (sudah include print)
             self.sistem.daftarkan_kendaraan(plat, jenis, status, jam)
             
         print("  [SYSTEM] Memproses beberapa kendaraan masuk dan keluar...")
@@ -1064,25 +1063,51 @@ class Menu:
         print(baris_satu('0.', 'Keluar'))
         print(garis_menu)
 
+    @staticmethod
+    def _input_angka(prompt, min_val=None, max_val=None):
+        while True:
+            try:
+                nilai = int(input(f"  {prompt}").strip())
+                if min_val is not None and nilai < min_val:
+                    print(f"  [!] Nilai minimal {min_val}.")
+                    continue
+                if max_val is not None and nilai > max_val:
+                    print(f"  [!] Nilai maksimal {max_val}.")
+                    continue
+                return nilai
+            except ValueError:
+                print("  [!] Masukkan angka yang valid.")
+
+    @staticmethod
+    def _input_pilihan(prompt, pilihan1, pilihan2):
+        while True:
+            pilihan = input(f"  {prompt}").strip()
+            if pilihan == '1':
+                return pilihan1
+            if pilihan == '2':
+                return pilihan2
+            print(f"  [!] Pilih 1 untuk {pilihan1} atau 2 untuk {pilihan2}.")
+
+    @staticmethod
+    def _input_plat():
+        while True:
+            plat = input("  Plat nomor: ").strip().upper()
+            if plat:
+                return plat
+            print("  [!] Plat nomor tidak boleh kosong.")
+
     def _input_kendaraan_baru(self):
         """Memandu pengguna memasukkan data kendaraan baru."""
-        plat = input("  Plat nomor: ").strip().upper()
-
-        print("  Jenis kendaraan: 1. Mobil   2. Motor")
-        pilihan_jenis = input("  Pilih (1/2): ").strip()
-        jenis = "Mobil" if pilihan_jenis == '1' else "Motor"
-
-        print("  Status kendaraan: 1. VIP   2. Reguler")
-        pilihan_status = input("  Pilih (1/2): ").strip()
-        status = "VIP" if pilihan_status == '1' else "Reguler"
-
-        jam_masuk = int(input("  Jam masuk (0-23): ").strip())
+        plat = self._input_plat()
+        jenis = self._input_pilihan("Jenis kendaraan (1. Mobil / 2. Motor): ", "Mobil", "Motor")
+        status = self._input_pilihan("Status kendaraan (1. VIP / 2. Reguler): ", "VIP", "Reguler")
+        jam_masuk = self._input_angka("Jam masuk (0-23): ", 0, 23)
 
         self.sistem.daftarkan_kendaraan(plat, jenis, status, jam_masuk)
 
     def _input_cari_kendaraan(self):
         """Memandu pengguna mencari kendaraan berdasarkan nomor tiket."""
-        no_tiket = int(input("  Nomor tiket yang dicari: ").strip())
+        no_tiket = self._input_angka("Nomor tiket yang dicari: ", 1)
         kendaraan = self.sistem.cari_kendaraan(no_tiket)
 
         if kendaraan is not None:

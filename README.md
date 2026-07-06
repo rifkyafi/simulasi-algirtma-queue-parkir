@@ -192,7 +192,22 @@ Semua kode program digabung dalam satu file `main.py`. Urutan definisi kelas:
 | Struktur Data | `Queue`, `Stack`, `MaxHeap`, `BinarySearchTree` | Implementasi struktur data |
 | Model | `Kendaraan` | Representasi entitas kendaraan |
 | Logika | `SistemParkir` | Mengintegrasikan semua struktur data |
-| Antarmuka | `Menu` | Tampilan CLI & routing input pengguna |
+| Antarmuka | `Menu` | Tampilan CLI, routing input, & validasi input pengguna |
+
+### 8. Kelas `Menu` — Antarmuka Pengguna & Validasi Input
+
+Selain menampilkan menu dan memproses pilihan, kelas `Menu` juga menyediakan **helper method statis** untuk validasi input agar program tidak mudah crash:
+
+| Method | Deskripsi |
+|--------|-----------|
+| `_input_angka(prompt, min_val, max_val)` | Minta input angka, validasi tipe dan range (loop sampai benar) |
+| `_input_pilihan(prompt, pilihan1, pilihan2)` | Minta input `1`/`2`, kembalikan string pilihan (loop sampai benar) |
+| `_input_plat()` | Minta plat nomor, tidak boleh kosong (loop sampai diisi) |
+
+Ketiga method ini menerapkan prinsip **Clean Code**:
+- **DRY** — validasi ditulis sekali, dipakai ulang di `_input_kendaraan_baru` dan `_input_cari_kendaraan`
+- **Guard Clauses** — validasi di awal, return segera jika valid
+- **Meaningful Error Messages** — pesan spesifik seperti *"Nilai minimal 0"*, *"Pilih 1 untuk Mobil atau 2 untuk Motor"*
 
 ---
 
