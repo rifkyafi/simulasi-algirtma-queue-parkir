@@ -21,8 +21,17 @@ SKOR_JENIS_MOBIL = 50       # Poin tambahan untuk jenis Mobil
 SKOR_JENIS_MOTOR = 25       # Poin tambahan untuk jenis Motor
 SKOR_PER_JAM_MASUK = 10     # Poin per jam masuk (semakin pagi = semakin lama parkir = prioritas lebih tinggi)
 
-SEPARATOR = "=" * 60        # Garis pembatas untuk tampilan menu
-GARIS_TIPIS = "-" * 60      # Garis tipis untuk tampilan menu
+SEPARATOR  = "=" * 78       # Garis pembatas utama
+GARIS_TIPIS = "-" * 78      # Garis tipis untuk tampilan menu
+
+# Lebar setiap kolom pada tabel kendaraan
+LEBAR_NO     = 4
+LEBAR_TIKET  = 9
+LEBAR_PLAT   = 12
+LEBAR_JENIS  = 8
+LEBAR_STATUS = 9
+LEBAR_JAM    = 12
+LEBAR_PRIORITAS = 11
 
 
 # =============================================================================
@@ -837,6 +846,93 @@ class SistemParkir:
         print(f"  Heap  (antrian keluar)     : {self.antrian_keluar.hitung_isi()} kendaraan")
         print(f"  Stack (riwayat transaksi)  : {self.riwayat_transaksi.hitung_isi()} kendaraan")
 
+    def tampilkan_semua_kendaraan(self):
+        """
+        Menampilkan SEMUA kendaraan (antrian + parkir aktif + riwayat) dalam format tabel.
+
+        Kendaraan dikelompokkan berdasarkan status (VIP / Reguler) agar mudah dibaca.
+        """
+        # Kumpulkan semua kendaraan dari ketiga sumber
+        antrian    = self.antrian_masuk.tampilkan_semua()               # List Kendaraan
+        parkir     = [k for _, k in self.parkir_aktif.tampilkan_inorder()]  # List Kendaraan
+        riwayat    = self.riwayat_transaksi.tampilkan_semua()           # List Kendaraan
+
+        # Tandai setiap kendaraan dengan lokasi saat ini
+        semua = (
+            [(k, "Antrian Masuk") for k in antrian] +
+            [(k, "Parkir Aktif") for k in parkir]  +
+            [(k, "Riwayat Keluar") for k in riwayat]
+        )
+
+        print(f"\n{SEPARATOR}")
+        print("  SEMUA KENDARAAN — REKAP LENGKAP")
+        print(SEPARATOR)
+
+        if not semua:
+            print("  (Belum ada kendaraan yang terdaftar di sistem)")
+            return
+
+        # Pisahkan ke dua kelompok: VIP dan Reguler
+        kendaraan_vip     = [(k, lok) for k, lok in semua if k.status == "VIP"]
+        kendaraan_reguler = [(k, lok) for k, lok in semua if k.status == "Reguler"]
+
+        # Tampilkan masing-masing kelompok
+        self._cetak_tabel_kendaraan("VIP", kendaraan_vip)
+        self._cetak_tabel_kendaraan("REGULER", kendaraan_reguler)
+
+        print(f"  Total keseluruhan: {len(semua)} kendaraan")
+        print(f"  (VIP: {len(kendaraan_vip)} | Reguler: {len(kendaraan_reguler)})")
+
+    @staticmethod
+    def _cetak_tabel_kendaraan(label_kelompok: str, daftar: list):
+        """
+        Mencetak satu kelompok kendaraan dalam format tabel ASCII.
+
+        Parameter:
+          label_kelompok : judul grup, contoh 'VIP' atau 'REGULER'
+          daftar         : list of tuple (Kendaraan, lokasi_string)
+        """
+        # Header kelompok
+        print(f"\n  [ {label_kelompok} ]")
+
+        # Baris header tabel
+        header = (
+            f"  {'No':>{LEBAR_NO}} "
+            f"{'Tiket':<{LEBAR_TIKET}} "
+            f"{'Plat':<{LEBAR_PLAT}} "
+            f"{'Jenis':<{LEBAR_JENIS}} "
+            f"{'Status':<{LEBAR_STATUS}} "
+            f"{'Jam Masuk':<{LEBAR_JAM}} "
+            f"{'Prioritas':>{LEBAR_PRIORITAS}} "
+            f"{'Lokasi'}"
+        )
+        garis_tabel = "  " + "-" * (len(header) - 2)
+
+        print(garis_tabel)
+        print(header)
+        print(garis_tabel)
+
+        if not daftar:
+            print(f"  {'(tidak ada)'}")
+            print(garis_tabel)
+            return
+
+        # Baris data
+        for nomor_urut, (kendaraan, lokasi) in enumerate(daftar, start=1):
+            baris = (
+                f"  {nomor_urut:>{LEBAR_NO}} "
+                f"#{kendaraan.no_tiket:03d}{'':<{LEBAR_TIKET - 4}} "
+                f"{kendaraan.plat:<{LEBAR_PLAT}} "
+                f"{kendaraan.jenis:<{LEBAR_JENIS}} "
+                f"{kendaraan.status:<{LEBAR_STATUS}} "
+                f"{kendaraan.jam_masuk:02d}:00{'':<{LEBAR_JAM - 5}} "
+                f"{kendaraan.prioritas:>{LEBAR_PRIORITAS}} "
+                f"{lokasi}"
+            )
+            print(baris)
+
+        print(garis_tabel)
+
 
 # =============================================================================
 # ANTARMUKA PENGGUNA: MENU
@@ -861,7 +957,7 @@ class Menu:
         while True:
             self._tampilkan_menu()
 
-            pilihan = input("  Pilih menu (0-10): ").strip()
+            pilihan = input("  Pilih menu (0-11): ").strip()
 
             if pilihan == '1':
                 self._input_kendaraan_baru()
@@ -893,30 +989,54 @@ class Menu:
             elif pilihan == '10':
                 self.sistem.tampilkan_ringkasan_sistem()
 
+            elif pilihan == '11':
+                self.sistem.tampilkan_semua_kendaraan()
+
             elif pilihan == '0':
                 print("\n  Terima kasih telah menggunakan sistem parkir. Sampai jumpa!")
                 break
 
             else:
-                print("  [!] Pilihan tidak valid. Masukkan angka 0-10.")
+                print("  [!] Pilihan tidak valid. Masukkan angka 0-11.")
 
     def _tampilkan_menu(self):
-        """Menampilkan daftar pilihan menu ke layar."""
-        print(f"\n{SEPARATOR}")
-        print("  SISTEM MANAJEMEN PARKIR - ALGORITMA & STRUKTUR DATA")
-        print(SEPARATOR)
-        print("  1.  Kendaraan Masuk (-> Queue)")
-        print("  2.  Proses Antrian Masuk (Queue -> BST -> Heap)")
-        print("  3.  Lihat Antrian Masuk (Queue)")
-        print("  4.  Cari Kendaraan (BST)")
-        print("  5.  Proses Keluar (Heap -> BST -> Stack)")
-        print("  6.  Lihat Status Parkir (BST)")
-        print("  7.  Lihat Prioritas Keluar (Heap)")
-        print("  8.  Undo Transaksi Terakhir (Stack -> BST -> Heap)")
-        print("  9.  Lihat Riwayat Transaksi (Stack)")
-        print("  10. Ringkasan Semua Struktur Data")
-        print("  0.  Keluar")
-        print(GARIS_TIPIS)
+        """
+        Menampilkan menu utama dalam format tabel dua kolom.
+
+        Tabel dibagi menjadi dua kolom agar lebih rapi dan ringkas:
+          - Kolom kiri  : operasi input / proses
+          - Kolom kanan : operasi tampilan / lihat
+        """
+        lebar_kolom = 36    # Lebar setiap sel kolom (tanpa nomor)
+        garis_menu  = "+" + "-" * 78 + "+"
+        garis_bagi  = "+" + "-" * 38 + "+" + "-" * 38 + "+"
+
+        def baris_menu(no_kiri, teks_kiri, no_kanan, teks_kanan):
+            """Membuat satu baris tabel dengan dua pilihan sejajar."""
+            sel_kiri  = f"  {no_kiri:<4}{teks_kiri}"
+            sel_kanan = f"  {no_kanan:<4}{teks_kanan}"
+            return f"| {sel_kiri:<{lebar_kolom}} | {sel_kanan:<{lebar_kolom}} |"
+
+        def baris_satu(no, teks):
+            """Membuat satu baris tabel yang memenuhi satu baris penuh."""
+            isi = f"  {no:<4}{teks}"
+            return f"| {isi:<76} |"
+
+        print(f"\n{garis_menu}")
+        print(f"|{'  SISTEM MANAJEMEN PARKIR':^78}|")
+        print(f"|{'  Algoritma & Struktur Data - Menu Utama':^78}|")
+        print(garis_bagi)
+        print(f"|{'  No':<6}{'Aksi':<34}|{'  No':<6}{'Aksi':<34}|")
+        print(garis_bagi)
+        print(baris_menu('1.', 'Kendaraan Masuk (-> Queue)',      '6.',  'Lihat Status Parkir (BST)'))
+        print(baris_menu('2.', 'Proses Antrian (Queue->BST->Heap)','7.',  'Lihat Prioritas Keluar (Heap)'))
+        print(baris_menu('3.', 'Lihat Antrian Masuk (Queue)',      '8.',  'Undo Transaksi (Stack->BST->Heap)'))
+        print(baris_menu('4.', 'Cari Kendaraan (BST)',             '9.',  'Lihat Riwayat Transaksi (Stack)'))
+        print(baris_menu('5.', 'Proses Keluar (Heap->BST->Stack)', '10.', 'Ringkasan Struktur Data'))
+        print(garis_bagi)
+        print(baris_satu('11.', 'Lihat Semua Kendaraan (Tabel VIP & Reguler)'))
+        print(baris_satu('0.',  'Keluar'))
+        print(garis_menu)
 
     def _input_kendaraan_baru(self):
         """Memandu pengguna memasukkan data kendaraan baru."""
