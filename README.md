@@ -140,24 +140,29 @@ skor_jenis  : Mobil = 50, Motor = 25
 
 ## Menu Program
 
-Menu utama ditampilkan dalam **format tabel dua kolom**:
+Menu utama ditampilkan dalam **format tabel satu kolom**:
 
 ```
-+------------------------------------------------------------------------------+
-|                    SISTEM MANAJEMEN PARKIR                                   |
-|             Algoritma & Struktur Data - Menu Utama                           |
-+--------------------------------------+--------------------------------------+
-|  No  Aksi                           |  No  Aksi                            |
-+--------------------------------------+--------------------------------------+
-|  1.  Kendaraan Masuk (-> Queue)     |  6.  Lihat Status Parkir (BST)       |
-|  2.  Proses Antrian (Queue->BST->.. |  7.  Lihat Prioritas Keluar (Heap)   |
-|  3.  Lihat Antrian Masuk (Queue)    |  8.  Undo Transaksi (Stack->BST->..  |
-|  4.  Cari Kendaraan (BST)           |  9.  Lihat Riwayat Transaksi (Stack) |
-|  5.  Proses Keluar (Heap->BST->..   |  10. Ringkasan Struktur Data         |
-+--------------------------------------+--------------------------------------+
-|  11.  Lihat Semua Kendaraan (Tabel VIP & Reguler)                           |
-|  0.   Keluar                                                                 |
-+------------------------------------------------------------------------------+
++----------------------------------------------------------------------------+
+|                          SISTEM MANAJEMEN PARKIR                           |
+|                  Algoritma & Struktur Data - Menu Utama                    |
++----------------------------------------------------------------------------+
+|  No   | Aksi                                                               |
++----------------------------------------------------------------------------+
+|  1.   | Kendaraan Masuk (-> Queue)                                         |
+|  2.   | Proses Antrian (Queue -> BST -> Heap)                              |
+|  3.   | Lihat Antrian Masuk (Queue)                                        |
+|  4.   | Cari Kendaraan (BST)                                               |
+|  5.   | Proses Keluar (Heap -> BST -> Stack)                               |
+|  6.   | Lihat Status Parkir (BST)                                          |
+|  7.   | Lihat Prioritas Keluar (Heap)                                      |
+|  8.   | Undo Transaksi Terakhir (Stack -> BST -> Heap)                     |
+|  9.   | Lihat Riwayat Transaksi (Stack)                                    |
+|  10.  | Ringkasan Semua Struktur Data                                      |
++----------------------------------------------------------------------------+
+|  11.  | Lihat Semua Kendaraan (Tabel VIP & Reguler)                        |
+|  0.   | Keluar                                                             |
++----------------------------------------------------------------------------+
 ```
 
 | No  | Fungsi |
@@ -199,11 +204,66 @@ python main.py
 
 ---
 
-## Contoh Alur Penggunaan
+## Contoh Simulasi Penggunaan
 
-1. **Daftarkan kendaraan** (menu `1`) → kendaraan masuk ke **Queue**
-2. **Proses antrian** (menu `2`) → kendaraan pindah dari **Queue** ke **BST** & **Heap**
-3. **Cari kendaraan** (menu `4`) → BST mencari berdasarkan nomor tiket
-4. **Proses keluar** (menu `5`) → **Heap** memilih prioritas tertinggi → hapus dari **BST** → simpan ke **Stack**
-5. **Undo** (menu `8`) → ambil dari **Stack** → kembalikan ke **BST** & **Heap**
-6. **Lihat semua** (menu `11`) → tabel lengkap semua kendaraan, dikelompokkan **VIP** dan **Reguler**
+Saat pertama kali dijalankan, program akan **otomatis mengisi 8 data kendaraan dummy** agar Anda bisa langsung melihat bagaimana sistem bekerja.
+
+Berikut adalah simulasi interaksi melalui terminal:
+
+```text
+  [SYSTEM] Menambahkan 8 data dummy kendaraan...
+  [QUEUE] Kendaraan B 1111 VIP (Mobil, VIP) masuk antrian. Jam: 08:00
+  ...
+  [SYSTEM] Memproses beberapa kendaraan masuk dan keluar...
+  [QUEUE -> BST + HEAP] Tiket#001 - B 1111 VIP parkir (Prioritas:250).
+  ...
+  [HEAP -> BST -> STACK] Tiket#005 - D 5555 VIP keluar (prioritas:230).
+  [SYSTEM] Data dummy selesai disiapkan.
+
++----------------------------------------------------------------------------+
+|                          SISTEM MANAJEMEN PARKIR                           |
+|                  Algoritma & Struktur Data - Menu Utama                    |
++----------------------------------------------------------------------------+
+|  No   | Aksi                                                               |
++----------------------------------------------------------------------------+
+|  1.   | Kendaraan Masuk (-> Queue)                                         |
+...
+|  11.  | Lihat Semua Kendaraan (Tabel VIP & Reguler)                        |
+|  0.   | Keluar                                                             |
++----------------------------------------------------------------------------+
+  Pilih menu (0-11): 11
+
+==============================================================================
+  SEMUA KENDARAAN — REKAP LENGKAP
+==============================================================================
+
+  [ VIP ]
+    ------------------------------------------------------------------------
+    No  Tiket     Plat         Jenis    Status    Jam Masuk    Prioritas  Lokasi
+    ------------------------------------------------------------------------
+     1  #001      B 1111 VIP   Mobil    VIP       08:00              250  Parkir Aktif
+     2  #008      L 8888 VIP   Motor    VIP       08:00              225  Antrian Masuk
+     3  #004      B 4444 VIP   Motor    VIP       07:00              215  Parkir Aktif
+     4  #005      D 5555 VIP   Mobil    VIP       06:00              230  Riwayat Keluar
+    ------------------------------------------------------------------------
+
+  [ REGULER ]
+    ------------------------------------------------------------------------
+    No  Tiket     Plat         Jenis    Status    Jam Masuk    Prioritas  Lokasi
+    ------------------------------------------------------------------------
+     1  #002      B 2222 REG   Mobil    Reguler   09:00              160  Parkir Aktif
+     2  #007      F 7777 REG   Mobil    Reguler   12:00              190  Antrian Masuk
+     3  #006      D 6666 REG   Motor    Reguler   11:00              155  Parkir Aktif
+     4  #003      B 3333 REG   Motor    Reguler   10:00              145  Riwayat Keluar
+    ------------------------------------------------------------------------
+  Total keseluruhan: 8 kendaraan
+  (VIP: 4 | Reguler: 4)
+```
+
+**Alur Pemrosesan Data**:
+1. **Daftarkan kendaraan** (menu `1`) → kendaraan antre di ujung **Queue**.
+2. **Proses antrian** (menu `2`) → kendaraan pindah dari depan **Queue** ke **BST** & **Heap**.
+3. **Cari kendaraan** (menu `4`) → BST mencari dengan sangat cepat `O(log n)` berdasarkan nomor tiket.
+4. **Proses keluar** (menu `5`) → **Heap** mengeluarkan kendaraan berprioritas tertinggi, menghapusnya dari **BST**, lalu menyimpannya ke **Stack**.
+5. **Undo** (menu `8`) → ambil kendaraan teratas dari **Stack**, kembalikan posisinya di **BST** & **Heap**.
+6. **Lihat semua** (menu `11`) → rangkuman semua data dari antrian, parkiran aktif, dan riwayat.

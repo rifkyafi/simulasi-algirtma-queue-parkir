@@ -951,6 +951,39 @@ class Menu:
 
     def __init__(self):
         self.sistem = SistemParkir()    # Inisialisasi sistem parkir
+        self._isi_data_dummy()          # Tambahkan 8 data dummy
+
+    def _isi_data_dummy(self):
+        """Mengisi sistem dengan 8 data kendaraan secara otomatis untuk demonstrasi."""
+        data_awal = [
+            # (Plat, Jenis, Status, Jam)
+            ("B 1111 VIP", "Mobil", "VIP", 8),
+            ("B 2222 REG", "Mobil", "Reguler", 9),
+            ("B 3333 REG", "Motor", "Reguler", 10),
+            ("B 4444 VIP", "Motor", "VIP", 7),
+            ("D 5555 VIP", "Mobil", "VIP", 6),
+            ("D 6666 REG", "Motor", "Reguler", 11),
+            ("F 7777 REG", "Mobil", "Reguler", 12),
+            ("L 8888 VIP", "Motor", "VIP", 8),
+        ]
+        
+        # 1. Masukkan semua ke antrian (Queue)
+        print("  [SYSTEM] Menambahkan 8 data dummy kendaraan...")
+        for plat, jenis, status, jam in data_awal:
+            # Gunakan _tambah_ke_antrian langsung agar tidak nge-print berlebihan jika perlu
+            # Tapi daftarkan_kendaraan ada print, tidak masalah untuk awal
+            self.sistem.daftarkan_kendaraan(plat, jenis, status, jam)
+            
+        print("  [SYSTEM] Memproses beberapa kendaraan masuk dan keluar...")
+        # 2. Pindahkan 6 dari 8 kendaraan ke area parkir (BST & Heap)
+        for _ in range(6):
+            self.sistem.proses_kendaraan_masuk()
+            
+        # 3. Keluarkan 2 kendaraan terprioritas agar masuk riwayat (Stack)
+        for _ in range(2):
+            self.sistem.proses_kendaraan_keluar()
+            
+        print("  [SYSTEM] Data dummy selesai disiapkan.\n")
 
     def jalankan(self):
         """Menjalankan loop utama program hingga pengguna memilih keluar."""
@@ -1001,41 +1034,34 @@ class Menu:
 
     def _tampilkan_menu(self):
         """
-        Menampilkan menu utama dalam format tabel dua kolom.
-
-        Tabel dibagi menjadi dua kolom agar lebih rapi dan ringkas:
-          - Kolom kiri  : operasi input / proses
-          - Kolom kanan : operasi tampilan / lihat
+        Menampilkan menu utama dalam format tabel satu kolom agar rapi.
         """
-        lebar_kolom = 36    # Lebar setiap sel kolom (tanpa nomor)
-        garis_menu  = "+" + "-" * 78 + "+"
-        garis_bagi  = "+" + "-" * 38 + "+" + "-" * 38 + "+"
-
-        def baris_menu(no_kiri, teks_kiri, no_kanan, teks_kanan):
-            """Membuat satu baris tabel dengan dua pilihan sejajar."""
-            sel_kiri  = f"  {no_kiri:<4}{teks_kiri}"
-            sel_kanan = f"  {no_kanan:<4}{teks_kanan}"
-            return f"| {sel_kiri:<{lebar_kolom}} | {sel_kanan:<{lebar_kolom}} |"
-
+        lebar_tabel = 76
+        garis_menu = "+" + "-" * lebar_tabel + "+"
+        
         def baris_satu(no, teks):
-            """Membuat satu baris tabel yang memenuhi satu baris penuh."""
-            isi = f"  {no:<4}{teks}"
-            return f"| {isi:<76} |"
+            """Membuat satu baris tabel yang rapi."""
+            return f"|  {no:<4} | {teks:<66} |"
 
         print(f"\n{garis_menu}")
-        print(f"|{'  SISTEM MANAJEMEN PARKIR':^78}|")
-        print(f"|{'  Algoritma & Struktur Data - Menu Utama':^78}|")
-        print(garis_bagi)
-        print(f"|{'  No':<6}{'Aksi':<34}|{'  No':<6}{'Aksi':<34}|")
-        print(garis_bagi)
-        print(baris_menu('1.', 'Kendaraan Masuk (-> Queue)',      '6.',  'Lihat Status Parkir (BST)'))
-        print(baris_menu('2.', 'Proses Antrian (Queue->BST->Heap)','7.',  'Lihat Prioritas Keluar (Heap)'))
-        print(baris_menu('3.', 'Lihat Antrian Masuk (Queue)',      '8.',  'Undo Transaksi (Stack->BST->Heap)'))
-        print(baris_menu('4.', 'Cari Kendaraan (BST)',             '9.',  'Lihat Riwayat Transaksi (Stack)'))
-        print(baris_menu('5.', 'Proses Keluar (Heap->BST->Stack)', '10.', 'Ringkasan Struktur Data'))
-        print(garis_bagi)
+        print(f"|{'SISTEM MANAJEMEN PARKIR':^76}|")
+        print(f"|{'Algoritma & Struktur Data - Menu Utama':^76}|")
+        print(garis_menu)
+        print(f"|  {'No':<4} | {'Aksi':<66} |")
+        print(garis_menu)
+        print(baris_satu('1.', 'Kendaraan Masuk (-> Queue)'))
+        print(baris_satu('2.', 'Proses Antrian (Queue -> BST -> Heap)'))
+        print(baris_satu('3.', 'Lihat Antrian Masuk (Queue)'))
+        print(baris_satu('4.', 'Cari Kendaraan (BST)'))
+        print(baris_satu('5.', 'Proses Keluar (Heap -> BST -> Stack)'))
+        print(baris_satu('6.', 'Lihat Status Parkir (BST)'))
+        print(baris_satu('7.', 'Lihat Prioritas Keluar (Heap)'))
+        print(baris_satu('8.', 'Undo Transaksi Terakhir (Stack -> BST -> Heap)'))
+        print(baris_satu('9.', 'Lihat Riwayat Transaksi (Stack)'))
+        print(baris_satu('10.', 'Ringkasan Semua Struktur Data'))
+        print(garis_menu)
         print(baris_satu('11.', 'Lihat Semua Kendaraan (Tabel VIP & Reguler)'))
-        print(baris_satu('0.',  'Keluar'))
+        print(baris_satu('0.', 'Keluar'))
         print(garis_menu)
 
     def _input_kendaraan_baru(self):
