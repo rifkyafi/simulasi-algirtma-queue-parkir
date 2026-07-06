@@ -211,7 +211,95 @@ Ketiga method ini menerapkan prinsip **Clean Code**:
 
 ---
 
-## Cara Menjalankan
+
+## Flowchart Sistem Parkir
+
+Berikut adalah diagram alur (flowchart) utama sistem parkir:
+
+```mermaid
+flowchart TD
+    Start([Start]) --> Init[Inisialisasi SistemParkir<br>& Data Dummy]
+    Init --> MenuLoop{Menu Utama<br>Tampilkan & Pilih}
+
+    MenuLoop -->|1. Daftar Kendaraan| InputKend[Input: Plat, Jenis, Status, Jam]
+    InputKend --> QueueEnqueue[Queue: tambah_ke_antrian]
+    QueueEnqueue --> MenuLoop
+
+    MenuLoop -->|2. Proses Masuk| CekAntrian{Queue kosong?}
+    CekAntrian -->|Ya| NotifAntrianKosong[Tidak ada antrian]
+    NotifAntrianKosong --> MenuLoop
+    CekAntrian -->|Tidak| QueueDequeue[Queue: ambil_dari_depan]
+    QueueDequeue --> BSTInsert[BST: sisipkan ke parkir_aktif]
+    BSTInsert --> HeapAdd[MaxHeap: tambahkan prioritas]
+    HeapAdd --> MenuLoop
+
+    MenuLoop -->|3. Lihat Antrian| TampilQueue[Tampilkan Queue]
+    TampilQueue --> MenuLoop
+
+    MenuLoop -->|4. Cari Kendaraan| InputTiket[Input: nomor tiket]
+    InputTiket --> BSTSearch[BST: cari by tiket]
+    BSTSearch -->|Ditemukan| TampilHasil[Tampilkan data kendaraan]
+    BSTSearch -->|Tidak ditemukan| TampilNotFound[Tampilkan tidak ditemukan]
+    TampilHasil --> MenuLoop
+    TampilNotFound --> MenuLoop
+
+    MenuLoop -->|5. Proses Keluar| CekHeap{Heap kosong?}
+    CekHeap -->|Ya| NotifHeapKosong[Tidak ada kendaraan parkir]
+    NotifHeapKosong --> MenuLoop
+    CekHeap -->|Tidak| HeapGet[MaxHeap: ambil_terbesar]
+    HeapGet --> BSTDelete[BST: hapus dari parkir_aktif]
+    BSTDelete --> StackPush[Stack: simpan ke riwayat_transaksi]
+    StackPush --> MenuLoop
+
+    MenuLoop -->|6. Lihat Parkir| TampilBST[Tampilkan BST inorder]
+    TampilBST --> MenuLoop
+
+    MenuLoop -->|7. Lihat Prioritas| TampilHeap[Tampilkan MaxHeap]
+    TampilHeap --> MenuLoop
+
+    MenuLoop -->|8. Undo| CekStack{Stack kosong?}
+    CekStack -->|Ya| NotifStackKosong[Tidak ada transaksi]
+    NotifStackKosong --> MenuLoop
+    CekStack -->|Tidak| StackPop[Stack: ambil_teratas]
+    StackPop --> BSTReinsert[BST: sisipkan kembali]
+    BSTReinsert --> HeapReadd[MaxHeap: tambahkan kembali]
+    HeapReadd --> MenuLoop
+
+    MenuLoop -->|9. Lihat Riwayat| TampilStack[Tampilkan Stack]
+    TampilStack --> MenuLoop
+
+    MenuLoop -->|10. Ringkasan| TampilRingkasan[Tampilkan jumlah di<br>Queue, BST, Heap, Stack]
+    TampilRingkasan --> MenuLoop
+
+    MenuLoop -->|11. Semua Kendaraan| TampilSemua[Tampilkan tabel<br>VIP & Reguler]
+    TampilSemua --> MenuLoop
+
+    MenuLoop -->|0. Keluar| End([End])
+
+    style Start fill:#e1f5fe
+    style End fill:#ffebee
+    style MenuLoop fill:#fff3e0
+```
+
+### Penjelasan Alur Berdasarkan Menu
+
+| No | Operasi | Alur Struktur Data |
+|----|---------|--------------------|
+| 1 | Daftarkan kendaraan baru | Input → **Queue** (enqueue) |
+| 2 | Proses kendaraan masuk | **Queue** (dequeue) → **BST** (sisip) + **MaxHeap** (tambah) |
+| 3 | Lihat antrian masuk | Tampilkan isi **Queue** |
+| 4 | Cari kendaraan | **BST** (cari by tiket) |
+| 5 | Proses kendaraan keluar | **MaxHeap** (ambil terbesar) → **BST** (hapus) → **Stack** (simpan) |
+| 6 | Lihat parkir aktif | Tampilkan **BST** (inorder) |
+| 7 | Lihat prioritas keluar | Tampilkan **MaxHeap** |
+| 8 | Undo transaksi terakhir | **Stack** (pop) → **BST** (sisip) + **MaxHeap** (tambah) |
+| 9 | Lihat riwayat transaksi | Tampilkan **Stack** |
+| 10 | Ringkasan sistem | Tampilkan jumlah di **Queue**, **BST**, **MaxHeap**, **Stack** |
+| 11 | Lihat semua kendaraan | Tampilkan tabel dari **Queue** + **BST** + **Stack** |
+
+---
+
+## Menu Program
 
 ```bash
 python main.py
