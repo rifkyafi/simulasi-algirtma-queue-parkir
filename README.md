@@ -370,3 +370,38 @@ Berikut adalah simulasi interaksi melalui terminal:
 4. **Proses keluar** (menu `5`) → **Heap** mengeluarkan kendaraan berprioritas tertinggi, menghapusnya dari **BST**, lalu menyimpannya ke **Stack**.
 5. **Undo** (menu `8`) → ambil kendaraan teratas dari **Stack**, kembalikan posisinya di **BST** & **Heap**.
 6. **Lihat semua** (menu `11`) → rangkuman semua data dari antrian, parkiran aktif, dan riwayat.
+
+---
+
+## Pembagian Tugas Presentasi
+
+Berdasarkan analisis pada struktur kode di `main.py`, program ini terdiri dari **9 Kelas**, **59 Fungsi/Metode**, dan panjang **1.128 baris**. 
+
+Agar pembagian tugas presentasi dilakukan secara **matematis, terurut dari baris atas ke bawah, dan adil secara beban kerja**, pendekatan terbaik adalah membaginya berdasarkan bobot fungsi/metode (masing-masing mendapatkan ~20 metode untuk dipresentasikan).
+
+Berikut adalah rumusan pembagiannya:
+
+### 1. Rifky (Bagian 1: Struktur Data Linier)
+*Mendapat urutan kode baris atas: Baris 43 - 263 (Total 16 Metode)*
+- **Kelas yang dibahas:**
+  1. `Node` & `BSTNode` (Fondasi/Gerbong data)
+  2. `Queue` (Logika Antrian Masuk / FIFO)
+  3. `Stack` (Logika Riwayat Transaksi / LIFO)
+- **Fokus Presentasi:** Rifky bertugas membuka presentasi. Menjelaskan konsep dasar pembuatan node, mendemonstrasikan bagaimana kendaraan yang baru datang mengantri di **Queue**, dan bagaimana transaksi keluar disimpan di **Stack** agar sistem bisa melakukan fitur *Undo*.
+
+### 2. Immel (Bagian 2: Struktur Data Non-Linier)
+*Mendapat urutan kode baris tengah: Baris 271 - 581 (Total 21 Metode)*
+- **Kelas yang dibahas:**
+  1. `MaxHeap` (Algoritma Prioritas Keluar Tertinggi)
+  2. `BinarySearchTree / BST` (Area Parkir Aktif / Pencarian Tiket)
+- **Fokus Presentasi:** Immel menjelaskan algoritma intinya. Mempresentasikan bagaimana **BST** digunakan untuk mempercepat pencarian mobil yang sedang parkir, dan bagaimana **MaxHeap** selalu memunculkan kendaraan dengan skor prioritas tertinggi untuk keluar lebih dulu.
+
+### 3. Hendar (Bagian 3: Model, Logika Sistem & CLI)
+*Mendapat urutan kode baris bawah: Baris 588 - 1128 (Total 22 Metode)*
+- **Kelas yang dibahas:**
+  1. `Kendaraan` (Model Data & Penentuan Skor)
+  2. `SistemParkir` (Pusat Kendali Utama)
+  3. `Menu` (Antarmuka CLI)
+- **Fokus Presentasi:** Hendar bertugas sebagai penutup yang menggabungkan seluruh komponen. Menjelaskan bagaimana `SistemParkir` mengorkestrasi Queue, Stack, Heap, dan BST secara bersamaan, serta mendemonstrasikan berjalannya program secara utuh.
+
+> **Catatan:** Pembagian di atas sangat **matematis & terurut**. Karena letaknya di tengah, kelas `BST` secara berurutan menjadi bagian dari Immel. Jika Hendar *wajib* membawakan materi BST, cukup tukar bagian presentasi antara Hendar dan Immel.
